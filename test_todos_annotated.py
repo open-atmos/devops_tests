@@ -28,12 +28,11 @@ def _grep(filepath, regex):
 
 @pytest.fixture(
     params=(
-        path for path in Git(
-            Git(".").rev_parse("--show-toplevel")
-        ).ls_files().split("\n")
+        path
+        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
         if os.path.isfile(path)
     ),
-    name="git_tracked_file"
+    name="git_tracked_file",
 )
 def _git_tracked_file(request):
     return request.param
@@ -64,8 +63,8 @@ def _gh_issues():
 
 
 def test_todos_annotated(git_tracked_file, gh_issues):
-    """ raises assertion errors if a TODO or FIXME is not annotated of if the annotation
-    does not point to an open issue """
+    """raises assertion errors if a TODO or FIXME is not annotated of if the annotation
+    does not point to an open issue"""
     for line in _grep(git_tracked_file, r".*(TODO|FIXME).*"):
         match = re.search(r"(TODO|FIXME) #(\d+)", line)
         if match is None:
