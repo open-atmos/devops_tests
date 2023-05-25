@@ -5,6 +5,7 @@ import os
 import re
 
 import pytest
+from binaryornot.check import is_binary
 from ghapi.all import GhApi, paged
 from git.cmd import Git
 
@@ -52,6 +53,8 @@ def _gh_issues():
 def test_todos_annotated(git_tracked_file, gh_issues):
     """raises assertion errors if a (TODO|FIXME) is not annotated or if the annotation
     does not point to an open issue"""
+    if is_binary(git_tracked_file):
+        pytest.skip("binary file")
     for line in _grep(git_tracked_file, r".*(TODO|FIXME).*"):
         if "(TODO|FIXME)" in line:
             continue
