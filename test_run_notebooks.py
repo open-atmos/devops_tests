@@ -15,7 +15,10 @@ import warnings
 import nbformat
 import pytest
 from git.cmd import Git
-from nbconvert.preprocessors import ExecutePreprocessor
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore")
+    from nbconvert.preprocessors import ExecutePreprocessor
 
 
 @pytest.fixture(
