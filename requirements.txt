@@ -3,3 +3,6 @@ ghapi
 gitpython
 binaryornot
 nbconvert
+jupyter-client>=8.0.2
+ipython
+ipykernel
