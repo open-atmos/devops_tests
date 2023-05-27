@@ -24,7 +24,9 @@ with warnings.catch_warnings():
 @pytest.fixture(
     params=(
         path
-        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
+        for path in Git(Git(".").rev_parse("--show-toplevel"))
+        .ls_files("--recurse-submodules")
+        .split("\n")
         if path.endswith(".ipynb")
     ),
     name="notebook_filename",
