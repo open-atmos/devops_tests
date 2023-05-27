@@ -23,9 +23,7 @@ def _grep(filepath, regex):
 @pytest.fixture(
     params=(
         path
-        for path in Git(Git(".").rev_parse("--show-toplevel"))
-        .ls_files("--recurse-submodules")
-        .split("\n")
+        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
         if os.path.isfile(path)
     ),
     name="git_tracked_file",
