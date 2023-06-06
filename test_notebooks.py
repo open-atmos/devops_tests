@@ -13,12 +13,15 @@ import os
 import warnings
 
 import nbformat
+import pint
 import pytest
 from git.cmd import Git
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     from nbconvert.preprocessors import ExecutePreprocessor
+
+SI = pint.UnitRegistry()
 
 
 @pytest.fixture(
@@ -50,3 +53,8 @@ def test_run_notebooks(notebook_filename, tmp_path):
 
     # so that nbconvert perplexities are reported here, and not at some dtor test later on
     gc.collect()
+
+
+def test_file_size(notebook_filename):
+    """checks if all example Jupyter notebooks have file size less than a certain limit"""
+    assert os.stat(notebook_filename).st_size * SI.byte < 1 * SI.megabyte
