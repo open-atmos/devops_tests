@@ -2,7 +2,7 @@ pytest
 ghapi
 gitpython
 binaryornot
-nbconvert
+nbconvert!=7.6.0  # waiting for https://github.com/jupyter/nbformat/commit/c348f9d12f05b4e0350413c74f58cd9e4f54a550
 jupyter-client>=8.0.2
 ipython
 ipykernel
