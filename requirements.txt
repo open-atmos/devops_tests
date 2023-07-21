@@ -7,3 +7,4 @@ jsonschema<4.18.0  # waiting for https://github.com/jupyter/nbformat/commit/c348
 jupyter-client>=8.0.2
 ipython
 ipykernel
+pint
