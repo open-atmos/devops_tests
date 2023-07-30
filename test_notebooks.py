@@ -59,10 +59,13 @@ def test_file_size(notebook_filename):
     """checks if all example Jupyter notebooks have file size less than a certain limit"""
     assert os.stat(notebook_filename).st_size * SI.byte < 1 * SI.megabyte
 
-def test_no_errors_or_warnings_in_output(notebook):
-    with open(notebook) as fp:
-        nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        for cell in nb.cells:
+
+def test_no_errors_or_warnings_in_output(notebook_filename):
+    """checks if all example Jupyter notebooks have clear std-err output
+    (i.e., no errors or warnings) visible"""
+    with open(notebook_filename, encoding="utf8") as notebook_file:
+        notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
+        for cell in notebook.cells:
             if cell.cell_type == "code":
                 for output in cell.outputs:
                     if "name" in output and output["name"] == "stderr":
