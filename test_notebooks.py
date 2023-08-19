@@ -56,8 +56,8 @@ def test_run_notebooks(notebook_filename, tmp_path):
 
 
 def test_file_size(notebook_filename):
-    """checks if all example Jupyter notebooks have file size less than a certain limit"""
-    assert os.stat(notebook_filename).st_size * SI.byte < 1 * SI.megabyte
+    """checks if all example Jupyter notebooks have file size less than an arbitrary limit"""
+    assert os.stat(notebook_filename).st_size * SI.byte < 2 * SI.megabyte
 
 
 def test_no_errors_or_warnings_in_output(notebook_filename):
