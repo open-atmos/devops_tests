@@ -9,6 +9,8 @@ from binaryornot.check import is_binary
 from ghapi.all import GhApi, paged
 from git.cmd import Git
 
+from utils import find_files
+
 
 def _grep(filepath, regex):
     reg_obj = re.compile(regex)
@@ -21,11 +23,7 @@ def _grep(filepath, regex):
 
 
 @pytest.fixture(
-    params=(
-        path
-        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
-        if os.path.isfile(path)
-    ),
+    params=find_files(),
     name="git_tracked_file",
 )
 def _git_tracked_file(request):

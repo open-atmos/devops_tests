@@ -3,6 +3,8 @@
 # https://bugs.python.org/issue37373
 import sys
 
+from utils import find_files
+
 if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
     import asyncio
 
@@ -15,7 +17,6 @@ import warnings
 import nbformat
 import pint
 import pytest
-from git.cmd import Git
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
@@ -24,15 +25,8 @@ with warnings.catch_warnings():
 SI = pint.UnitRegistry()
 
 
-def find_files(path_to_folder_from_project_root=".", file_extension=".ipynb"):
-    return [
-        path for path in Git(Git(path_to_folder_from_project_root).rev_parse("--show-toplevel")).ls_files().split("\n")
-        if path.endswith(file_extension)
-    ]
-
-
 @pytest.fixture(
-    params=find_files(),
+    params=find_files(file_extension=".ipynb"),
     name="notebook_filename",
 )
 def _notebook_filename(request):
