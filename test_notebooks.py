@@ -1,7 +1,14 @@
 """ executes all Jupyter notebooks tracked by git """
 # pylint: disable=wrong-import-position
 # https://bugs.python.org/issue37373
+import gc
+import os
 import sys
+import warnings
+
+import nbformat
+import pint
+import pytest
 
 from utils import find_files
 
@@ -10,13 +17,6 @@ if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
 
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-import gc
-import os
-import warnings
-
-import nbformat
-import pint
-import pytest
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
