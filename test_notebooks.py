@@ -32,7 +32,7 @@ def find_files(path_to_folder_from_project_root=".", file_extension=".ipynb"):
 
 
 @pytest.fixture(
-    params=(find_files()),
+    params=find_files(),
     name="notebook_filename",
 )
 def _notebook_filename(request):
