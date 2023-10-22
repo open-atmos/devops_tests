@@ -24,12 +24,15 @@ with warnings.catch_warnings():
 SI = pint.UnitRegistry()
 
 
+def find_files(path_to_folder_from_project_root=".", file_extension=".ipynb"):
+    return [
+        path for path in Git(Git(path_to_folder_from_project_root).rev_parse("--show-toplevel")).ls_files().split("\n")
+        if path.endswith(file_extension)
+    ]
+
+
 @pytest.fixture(
-    params=(
-        path
-        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
-        if path.endswith(".ipynb")
-    ),
+    params=(find_files()),
     name="notebook_filename",
 )
 def _notebook_filename(request):
