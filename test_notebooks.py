@@ -18,7 +18,6 @@ import pytest
 
 from utils import find_files
 
-
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     from nbconvert.preprocessors import ExecutePreprocessor
