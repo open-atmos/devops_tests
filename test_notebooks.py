@@ -15,7 +15,8 @@ import warnings
 import nbformat
 import pint
 import pytest
-from git.cmd import Git
+
+from .utils import find_files
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
@@ -25,11 +26,7 @@ SI = pint.UnitRegistry()
 
 
 @pytest.fixture(
-    params=(
-        path
-        for path in Git(Git(".").rev_parse("--show-toplevel")).ls_files().split("\n")
-        if path.endswith(".ipynb")
-    ),
+    params=find_files(file_extension=".ipynb"),
     name="notebook_filename",
 )
 def _notebook_filename(request):
