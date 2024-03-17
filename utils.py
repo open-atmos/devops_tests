@@ -1,6 +1,7 @@
 """
 Utils functions to reuse in different parts of the codebase
 """
+
 import os
 
 from git.cmd import Git
