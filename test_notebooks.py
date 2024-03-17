@@ -68,3 +68,18 @@ def test_no_errors_or_warnings_in_output(notebook_filename):
                 for output in cell.outputs:
                     if "name" in output and output["name"] == "stderr":
                         raise AssertionError(output["text"])
+
+
+def test_jetbrains_bug_py_66491(notebook_filename):
+    """checks if all notebooks have the execution_count key for each cell in JSON what is
+    required by GitHub renderer and what happens not to be the case if generating the notebook
+    using buggy versions of PyCharm: https://youtrack.jetbrains.com/issue/PY-66491"""
+    with open(notebook_filename, encoding="utf8") as notebook_file:
+        notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
+        for cell in notebook.cells:
+            if cell.cell_type == "code" and not hasattr(cell, "execution_count"):
+                raise AssertionError(
+                    "notebook cell is missing the execution_count attribute"
+                    + " (could be due to a bug in PyCharm,"
+                    + " see https://youtrack.jetbrains.com/issue/PY-66491)"
+                )
