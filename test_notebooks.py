@@ -81,5 +81,5 @@ def test_jetbrains_bug_py_66491(notebook_filename):
                 raise AssertionError(
                     "notebook cell is missing the execution_count attribute"
                     + " (could be due to a bug in PyCharm,"
-                    + " see https://youtrack.jetbrains.com/issue/PY-66491)"
+                    + " see https://youtrack.jetbrains.com/issue/PY-66491 )"
                 )
