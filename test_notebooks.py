@@ -103,10 +103,20 @@ def test_first_cell_contains_three_badges(notebook):
         assert lines[1] == _mybinder_badge_markdown(notebook)
         assert lines[2] == _colab_badge_markdown(notebook)
 
-def test_second_cell_contains_colab_header(notebook):
-    """ checks if all notebooks feature a Colab-magick cell (just below badges) """
+
+def test_second_cell_is_a_markdown_cell(notebook):
+    """ checks if all notebooks have their second cell with some markdown (hopefully clarifying what the example is about) """
     with open(notebook) as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 1
-        assert nb.cells[0].cell_type == "code"
-        assert nb.cells[1].source == COLAB_HEADER
+        assert nb.cells[1].cell_type == "markdown"
+        
+        
+def test_third_cell_contains_colab_header(notebook):
+    """ checks if all notebooks feature a Colab-magic cell """
+    with open(notebook) as fp:
+        nb = nbformat.read(fp, nbformat.NO_CONVERT)
+        assert len(nb.cells) > 2
+        assert nb.cells[2].cell_type == "code"
+        assert nb.cells[2].source == COLAB_HEADER
+
