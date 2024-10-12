@@ -129,9 +129,9 @@ def test_first_cell_contains_three_badges(notebook_filename):
         assert nb.cells[0].cell_type == "markdown"
         lines = nb.cells[0].source.split("\n")
         assert len(lines) == 3
-        assert lines[0] == _nbviewer_badge_markdown(notebook)
-        assert lines[1] == _mybinder_badge_markdown(notebook)
-        assert lines[2] == _colab_badge_markdown(notebook)
+        assert lines[0] == _nbviewer_badge_markdown(notebook_filename)
+        assert lines[1] == _mybinder_badge_markdown(notebook_filename)
+        assert lines[2] == _colab_badge_markdown(notebook_filename)
 
 
 def test_second_cell_is_a_markdown_cell(notebook_filename):
