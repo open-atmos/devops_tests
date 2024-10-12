@@ -120,10 +120,10 @@ def _colab_badge_markdown(absolute_path):
     return f"[![launch on Colab]({svg_badge_url})]({link})"
 
 
-def test_first_cell_contains_three_badges(notebook):
+def test_first_cell_contains_three_badges(notebook_filename):
     """checks if all notebooks feature nbviewer, mybinder and Colab badges
     (in the first cell)"""
-    with open(notebook, encoding="utf8") as fp:
+    with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 0
         assert nb.cells[0].cell_type == "markdown"
@@ -134,18 +134,18 @@ def test_first_cell_contains_three_badges(notebook):
         assert lines[2] == _colab_badge_markdown(notebook)
 
 
-def test_second_cell_is_a_markdown_cell(notebook):
+def test_second_cell_is_a_markdown_cell(notebook_filename):
     """checks if all notebooks have their second cell with some markdown
     (hopefully clarifying what the example is about)"""
-    with open(notebook, encoding="utf8") as fp:
+    with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 1
         assert nb.cells[1].cell_type == "markdown"
 
 
-def test_third_cell_contains_colab_header(notebook):
+def test_third_cell_contains_colab_header(notebook_filename):
     """checks if all notebooks feature a Colab-magic cell"""
-    with open(notebook, encoding="utf8") as fp:
+    with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 2
         assert nb.cells[2].cell_type == "code"
