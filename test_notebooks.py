@@ -100,7 +100,7 @@ def _relative_path(absolute_path):
 
 def _nbviewer_badge_markdown(absolute_path):
     svg_badge_url = "https://raw.githubusercontent.com/\
-        jupyter/design/master/logos/Badges/nbviewer_badge.svg"
+    jupyter/design/master/logos/Badges/nbviewer_badge.svg"
     link = f"https://nbviewer.jupyter.org/github/open-atmos/PySDM/blob/main/\
     {_relative_path(absolute_path)}"
     return f"[![preview in nbviewer]({svg_badge_url})]({link})"
