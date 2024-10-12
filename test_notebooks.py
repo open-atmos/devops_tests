@@ -16,6 +16,7 @@ import warnings
 import nbformat
 import pint
 import pytest
+import pathlib
 
 from .utils import find_files
 
@@ -86,8 +87,7 @@ def test_jetbrains_bug_py_66491(notebook_filename):
                 raise AssertionError(
                     "notebook cell is missing the execution_count attribute"
                     + " (could be due to a bug in PyCharm,"
-                    + " see https://youtrack.jetbrains.com/issue/PY-66491 )"
-                )
+                    + " see https://youtrack.jetbrains.com/issue/PY-66491 )")
     
 def _relative_path(absolute_path):
     return os.path.relpath(
