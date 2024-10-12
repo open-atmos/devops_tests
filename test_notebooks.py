@@ -99,25 +99,30 @@ def _relative_path(absolute_path):
 
 
 def _nbviewer_badge_markdown(absolute_path):
-    svg_badge_url = "https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg"
-    link = f"https://nbviewer.jupyter.org/github/open-atmos/PySDM/blob/main/{_relative_path(absolute_path)}"
+    svg_badge_url = 
+        "https://raw.githubusercontent.com/jupyter/design/master/logos/Badges/nbviewer_badge.svg"
+    link = f"https://nbviewer.jupyter.org/github/open-atmos/PySDM/blob/main/\
+    {_relative_path(absolute_path)}"
     return f"[![preview in nbviewer]({svg_badge_url})]({link})"
 
 
 def _mybinder_badge_markdown(abslute_path):
     svg_badge_url = "https://mybinder.org/badge_logo.svg"
-    link = f"https://mybinder.org/v2/gh/open-atmos/PySDM.git/main?urlpath=lab/tree/{_relative_path(abslute_path)}"
+    link = f"https://mybinder.org/v2/gh/open-atmos/PySDM.git/main?urlpath=lab/tree/\
+    {_relative_path(abslute_path)}"
     return f"[![launch on mybinder.org]({svg_badge_url})]({link})"
 
 
 def _colab_badge_markdown(absolute_path):
     svg_badge_url = "https://colab.research.google.com/assets/colab-badge.svg"
-    link = f"https://colab.research.google.com/github/open-atmos/PySDM/blob/main/{_relative_path(absolute_path)}"
+    link = f"https://colab.research.google.com/github/open-atmos/PySDM/blob/main/\
+    {_relative_path(absolute_path)}"
     return f"[![launch on Colab]({svg_badge_url})]({link})"
 
 
 def test_first_cell_contains_three_badges(notebook):
-    """checks if all notebooks feature nbviewer, mybinder and Colab badges (in the first cell)"""
+    """checks if all notebooks feature nbviewer, mybinder and Colab badges 
+    (in the first cell)"""
     with open(notebook, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 0
@@ -130,7 +135,8 @@ def test_first_cell_contains_three_badges(notebook):
 
 
 def test_second_cell_is_a_markdown_cell(notebook):
-    """checks if all notebooks have their second cell with some markdown (hopefully clarifying what the example is about)"""
+    """checks if all notebooks have their second cell with some markdown 
+    (hopefully clarifying what the example is about)"""
     with open(notebook, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         assert len(nb.cells) > 1
