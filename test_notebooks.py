@@ -12,11 +12,11 @@ if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
 import gc
 import os
 import warnings
+import pathlib
 
 import nbformat
 import pint
 import pytest
-import pathlib
 
 from .utils import find_files
 
