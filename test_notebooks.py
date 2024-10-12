@@ -121,7 +121,7 @@ def _colab_badge_markdown(absolute_path):
 
 
 def test_first_cell_contains_three_badges(notebook):
-    """checks if all notebooks feature nbviewer, mybinder and Colab badges 
+    """checks if all notebooks feature nbviewer, mybinder and Colab badges
     (in the first cell)"""
     with open(notebook, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
@@ -135,7 +135,7 @@ def test_first_cell_contains_three_badges(notebook):
 
 
 def test_second_cell_is_a_markdown_cell(notebook):
-    """checks if all notebooks have their second cell with some markdown 
+    """checks if all notebooks have their second cell with some markdown
     (hopefully clarifying what the example is about)"""
     with open(notebook, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
