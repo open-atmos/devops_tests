@@ -26,11 +26,23 @@ with warnings.catch_warnings():
 
 SI = pint.UnitRegistry()
 
-COLAB_HEADER = """import sys
+
+def _relative_path(absolute_path):
+    return os.path.relpath(absolute_path, _repo_path().absolute())
+
+
+def _repo_path():
+    path = pathlib.Path(__file__)
+    while not (path.is_dir() and (path / ".git").exists()):
+        path = path.parent
+    return path
+
+
+COLAB_HEADER = f"""import sys
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('PySDM-examples')"""
+    pip_install_on_colab('{_repo_path().name}-examples')"""
 
 
 @pytest.fixture(
@@ -92,27 +104,13 @@ def test_jetbrains_bug_py_66491(notebook_filename):
                 )
 
 
-def _relative_path(absolute_path):
-    path = pathlib.Path(__file__)
-    while not (path.is_dir() and (path / ".git").exists()):
-        path = path.parent
-    return os.path.relpath(absolute_path, path.absolute())
-
-
-def _repo_name():
-    path = pathlib.Path(__file__)
-    while not (path.is_dir() and (path / ".git").exists()):
-        path = path.parent
-    return path.name
-
-
 def _preview_badge_markdown(absolute_path):
     svg_badge_url = (
         "https://img.shields.io/static/v1?"
         + "label=render%20on&logo=github&color=87ce3e&message=GitHub"
     )
     link = (
-        f"https://github.com/open-atmos/{_repo_name()}/blob/main/"
+        f"https://github.com/open-atmos/{_repo_path().name}/blob/main/"
         + f"{_relative_path(absolute_path)}"
     )
     return f"[![preview notebook]({svg_badge_url})]({link})"
@@ -121,7 +119,7 @@ def _preview_badge_markdown(absolute_path):
 def _mybinder_badge_markdown(abslute_path):
     svg_badge_url = "https://mybinder.org/badge_logo.svg"
     link = (
-        f"https://mybinder.org/v2/gh/open-atmos/{_repo_name()}.git/main?urlpath=lab/tree/"
+        f"https://mybinder.org/v2/gh/open-atmos/{_repo_path().name}.git/main?urlpath=lab/tree/"
         + f"{_relative_path(abslute_path)}"
     )
     return f"[![launch on mybinder.org]({svg_badge_url})]({link})"
@@ -130,7 +128,7 @@ def _mybinder_badge_markdown(abslute_path):
 def _colab_badge_markdown(absolute_path):
     svg_badge_url = "https://colab.research.google.com/assets/colab-badge.svg"
     link = (
-        f"https://colab.research.google.com/github/open-atmos/{_repo_name()}/blob/main/"
+        f"https://colab.research.google.com/github/open-atmos/{_repo_path().name}/blob/main/"
         + f"{_relative_path(absolute_path)}"
     )
     return f"[![launch on Colab]({svg_badge_url})]({link})"
