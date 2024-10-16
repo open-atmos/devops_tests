@@ -3,6 +3,7 @@
 # pylint: disable=wrong-import-position
 # https://bugs.python.org/issue37373
 import sys
+from pathlib import PurePath
 
 if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
     import asyncio
@@ -28,7 +29,7 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
-    return os.path.relpath(absolute_path, _repo_path().absolute())
+    return os.path.relpath(absolute_path, PurePath(_repo_path().absolute()))
 
 
 def _repo_path():
