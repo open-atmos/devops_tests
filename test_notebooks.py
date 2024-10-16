@@ -3,7 +3,6 @@
 # pylint: disable=wrong-import-position
 # https://bugs.python.org/issue37373
 import sys
-from pathlib import PurePath
 
 if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
     import asyncio
@@ -29,7 +28,7 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
-    return os.path.relpath(absolute_path, PurePath(_repo_path().absolute()))
+    return os.path.relpath(absolute_path, _repo_path().absolute())
 
 
 def _repo_path():
@@ -112,7 +111,7 @@ def _preview_badge_markdown(absolute_path):
     )
     link = (
         f"https://github.com/open-atmos/{_repo_path().name}/blob/main/"
-        + f"{_relative_path(absolute_path)}"
+        + f"{pathlib.PurePath(_relative_path(absolute_path))}"
     )
     return f"[![preview notebook]({svg_badge_url})]({link})"
 
@@ -121,7 +120,7 @@ def _mybinder_badge_markdown(abslute_path):
     svg_badge_url = "https://mybinder.org/badge_logo.svg"
     link = (
         f"https://mybinder.org/v2/gh/open-atmos/{_repo_path().name}.git/main?urlpath=lab/tree/"
-        + f"{_relative_path(abslute_path)}"
+        + f"{pathlib.PurePath(_relative_path(abslute_path))}"
     )
     return f"[![launch on mybinder.org]({svg_badge_url})]({link})"
 
@@ -130,13 +129,13 @@ def _colab_badge_markdown(absolute_path):
     svg_badge_url = "https://colab.research.google.com/assets/colab-badge.svg"
     link = (
         f"https://colab.research.google.com/github/open-atmos/{_repo_path().name}/blob/main/"
-        + f"{_relative_path(absolute_path)}"
+        + f"{pathlib.PurePath(_relative_path(absolute_path))}"
     )
     return f"[![launch on Colab]({svg_badge_url})]({link})"
 
 
 def test_first_cell_contains_three_badges(notebook_filename):
-    """checks if all notebooks feature nbviewer, mybinder and Colab badges
+    """checks if all notebooks feature preview, mybinder and Colab badges
     (in the first cell)"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
