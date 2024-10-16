@@ -93,30 +93,43 @@ def test_jetbrains_bug_py_66491(notebook_filename):
 
 
 def _relative_path(absolute_path):
-    return os.path.relpath(
-        absolute_path, pathlib.Path(__file__).parent.parent.parent.absolute()
+    path = pathlib.Path(__file__)
+    while not (path.is_dir() and (path / ".git").exists()):
+        path = path.parent
+    return os.path.relpath(absolute_path, path.absolute())
+
+
+def _repo_name():
+    path = pathlib.Path(__file__)
+    while not (path.is_dir() and (path / ".git").exists()):
+        path = path.parent
+    return path.name
+
+
+def _preview_badge_markdown(absolute_path):
+    svg_badge_url = "https://img.shields.io/static/v1?label=render%20on&logo=github&color=87ce3e&message=GitHub"
+    link = (
+        f"https://github.com/open-atmos/{_repo_name()}/blob/main/"
+        + f"{_relative_path(absolute_path)}"
     )
-
-
-def _nbviewer_badge_markdown(absolute_path):
-    svg_badge_url = "https://raw.githubusercontent.com/\
-    jupyter/design/master/logos/Badges/nbviewer_badge.svg"
-    link = f"https://nbviewer.jupyter.org/github/open-atmos/PySDM/blob/main/\
-    {_relative_path(absolute_path)}"
-    return f"[![preview in nbviewer]({svg_badge_url})]({link})"
+    return f"[![preview notebook]({svg_badge_url})]({link})"
 
 
 def _mybinder_badge_markdown(abslute_path):
     svg_badge_url = "https://mybinder.org/badge_logo.svg"
-    link = f"https://mybinder.org/v2/gh/open-atmos/PySDM.git/main?urlpath=lab/tree/\
-    {_relative_path(abslute_path)}"
+    link = (
+        f"https://mybinder.org/v2/gh/open-atmos/{_repo_name()}.git/main?urlpath=lab/tree/"
+        + f"{_relative_path(abslute_path)}"
+    )
     return f"[![launch on mybinder.org]({svg_badge_url})]({link})"
 
 
 def _colab_badge_markdown(absolute_path):
     svg_badge_url = "https://colab.research.google.com/assets/colab-badge.svg"
-    link = f"https://colab.research.google.com/github/open-atmos/PySDM/blob/main/\
-    {_relative_path(absolute_path)}"
+    link = (
+        f"https://colab.research.google.com/github/open-atmos/{_repo_name()}/blob/main/"
+        + f"{_relative_path(absolute_path)}"
+    )
     return f"[![launch on Colab]({svg_badge_url})]({link})"
 
 
@@ -129,7 +142,7 @@ def test_first_cell_contains_three_badges(notebook_filename):
         assert nb.cells[0].cell_type == "markdown"
         lines = nb.cells[0].source.split("\n")
         assert len(lines) == 3
-        assert lines[0] == _nbviewer_badge_markdown(notebook_filename)
+        assert lines[0] == _preview_badge_markdown(notebook_filename)
         assert lines[1] == _mybinder_badge_markdown(notebook_filename)
         assert lines[2] == _colab_badge_markdown(notebook_filename)
 
