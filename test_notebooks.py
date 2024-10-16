@@ -28,7 +28,7 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
-    return os.path.normpath(os.path.relpath(absolute_path, _repo_path().absolute()))
+    return os.path.relpath(absolute_path, _repo_path().absolute())
 
 
 def _repo_path():
@@ -50,7 +50,7 @@ if 'google.colab' in sys.modules:
     name="notebook_filename",
 )
 def _notebook_filename(request):
-    return request.param
+    return os.path.normpath(request.param)
 
 
 def test_run_notebooks(notebook_filename, tmp_path):
