@@ -107,7 +107,10 @@ def _repo_name():
 
 
 def _preview_badge_markdown(absolute_path):
-    svg_badge_url = "https://img.shields.io/static/v1?label=render%20on&logo=github&color=87ce3e&message=GitHub"
+    svg_badge_url = (
+        "https://img.shields.io/static/v1?"
+        + "label=render%20on&logo=github&color=87ce3e&message=GitHub"
+    )
     link = (
         f"https://github.com/open-atmos/{_repo_name()}/blob/main/"
         + f"{_relative_path(absolute_path)}"
