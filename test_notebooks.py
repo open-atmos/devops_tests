@@ -29,9 +29,9 @@ SI = pint.UnitRegistry()
 
 def _relative_path(absolute_path):
     relpath = os.path.relpath(absolute_path, _repo_path().absolute())
-    normpath = os.path.normpath(relpath)
-    print(f"{relpath=}, {normpath=}")
-    return normpath
+    posixpath = pathlib.Path(relpath).as_posix()
+    print(f"{relpath=}, {posixpath=}")
+    return posixpath
 
 
 def _repo_path():
