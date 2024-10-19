@@ -28,7 +28,10 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
-    return os.path.relpath(absolute_path, _repo_path().absolute())
+    relpath = os.path.relpath(absolute_path, _repo_path().absolute())
+    normpath = os.path.normpath(relpath)
+    print(f"{relpath=}, {normpath=}")
+    return normpath
 
 
 def _repo_path():
@@ -50,7 +53,7 @@ if 'google.colab' in sys.modules:
     name="notebook_filename",
 )
 def _notebook_filename(request):
-    return os.path.normpath(request.param)
+    return request.param
 
 
 def test_run_notebooks(notebook_filename, tmp_path):
@@ -135,7 +138,7 @@ def _colab_badge_markdown(absolute_path):
 
 
 def test_first_cell_contains_three_badges(notebook_filename):
-    """checks if all notebooks feature nbviewer, mybinder and Colab badges
+    """checks if all notebooks feature Github preview, mybinder and Colab badges
     (in the first cell)"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
