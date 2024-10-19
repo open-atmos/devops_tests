@@ -29,7 +29,9 @@ SI = pint.UnitRegistry()
 
 def _relative_path(absolute_path):
     relpath = os.path.relpath(absolute_path, _repo_path().absolute())
-    posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(relpath).as_posix()
+    posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(
+        relpath
+    ).as_posix()
     return posixpath_to_make_it_usable_in_urls_even_on_windows
 
 
