@@ -18,6 +18,8 @@ import nbformat
 import pint
 import pytest
 
+from git.cmd import Git
+
 from .utils import find_files
 
 with warnings.catch_warnings():
@@ -28,6 +30,7 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
+    """ returns a path relative to the repo base (converting backslashes to slashes on Windows) """
     relpath = os.path.relpath(absolute_path, _repo_path().absolute())
     posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(
         relpath
@@ -36,8 +39,9 @@ def _relative_path(absolute_path):
 
 
 def _repo_path():
+    """ returns absolute path to the repo base (ignoring .git location if in a submodule) """
     path = pathlib.Path(__file__)
-    while not (path.is_dir() and (path / ".git").exists()):
+    while not (path.is_dir() and Git(path).rev_parse("--git-dir") == ".git"):
         path = path.parent
     return path
 
