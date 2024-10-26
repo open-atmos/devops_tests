@@ -50,5 +50,5 @@ jobs:
       - run: pip install -r requirements.txt
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pytest -vv -We .
+        run: pytest -vv -rP -We .
 

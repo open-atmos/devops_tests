@@ -17,6 +17,7 @@ import warnings
 import nbformat
 import pint
 import pytest
+from git.cmd import Git
 
 from .utils import find_files
 
@@ -28,12 +29,18 @@ SI = pint.UnitRegistry()
 
 
 def _relative_path(absolute_path):
-    return os.path.relpath(absolute_path, _repo_path().absolute())
+    """returns a path relative to the repo base (converting backslashes to slashes on Windows)"""
+    relpath = os.path.relpath(absolute_path, _repo_path().absolute())
+    posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(
+        relpath
+    ).as_posix()
+    return posixpath_to_make_it_usable_in_urls_even_on_windows
 
 
 def _repo_path():
+    """returns absolute path to the repo base (ignoring .git location if in a submodule)"""
     path = pathlib.Path(__file__)
-    while not (path.is_dir() and (path / ".git").exists()):
+    while not (path.is_dir() and Git(path).rev_parse("--git-dir") == ".git"):
         path = path.parent
     return path
 
@@ -135,7 +142,7 @@ def _colab_badge_markdown(absolute_path):
 
 
 def test_first_cell_contains_three_badges(notebook_filename):
-    """checks if all notebooks feature nbviewer, mybinder and Colab badges
+    """checks if all notebooks feature Github preview, mybinder and Colab badges
     (in the first cell)"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
