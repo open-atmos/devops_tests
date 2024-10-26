@@ -57,7 +57,7 @@ if 'google.colab' in sys.modules:
     name="notebook_filename",
 )
 def _notebook_filename(request):
-    return os.path.normpath(request.param)
+    return request.param
 
 
 def test_run_notebooks(notebook_filename, tmp_path):
