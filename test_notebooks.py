@@ -120,7 +120,7 @@ def _preview_badge_markdown(absolute_path):
         f"https://github.com/open-atmos/{_repo_path().name}/blob/main/"
         + f"{_relative_path(absolute_path)}"
     )
-    return f"[![preview notebook]({svg_badge_url})]({link})"
+    return f"[![View notebook]({svg_badge_url})]({link})"
 
 
 def _mybinder_badge_markdown(abslute_path):
