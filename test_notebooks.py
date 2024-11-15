@@ -178,4 +178,4 @@ def test_cell_contains_output(notebook_filename):
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         for cell in nb.cells:
             if cell.cell_type == "code":
-                assert hasattr(cell, "outputs")a
+                assert hasattr(cell, "outputs")
