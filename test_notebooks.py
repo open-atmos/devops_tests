@@ -172,6 +172,7 @@ def test_third_cell_contains_colab_header(notebook_filename):
         assert nb.cells[2].cell_type == "code"
         assert nb.cells[2].source == COLAB_HEADER
 
+
 def test_cell_contains_output(notebook_filename):
     """checks if all notebook cells have an output present"""
     with open(notebook_filename, encoding="utf8") as fp:
