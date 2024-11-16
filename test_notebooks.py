@@ -86,14 +86,16 @@ def test_file_size(notebook_filename):
 
 def test_no_errors_or_warnings_in_output(notebook_filename):
     """checks if all example Jupyter notebooks have clear std-err output
-    (i.e., no errors or warnings) visible"""
+    (i.e., no errors or warnings) visible; with exception of acceptable
+    diagnostics from the joblib package"""
     with open(notebook_filename, encoding="utf8") as notebook_file:
         notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
         for cell in notebook.cells:
             if cell.cell_type == "code":
                 for output in cell.outputs:
                     if "name" in output and output["name"] == "stderr":
-                        raise AssertionError(output["text"])
+                        if not output["text"].startswith("[Parallel(n_jobs="):
+                            raise AssertionError(output["text"])
 
 
 def test_jetbrains_bug_py_66491(notebook_filename):
