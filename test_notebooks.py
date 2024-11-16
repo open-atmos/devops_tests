@@ -178,5 +178,5 @@ def test_cell_contains_output(notebook_filename):
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
         for cell in nb.cells:
-            if cell.cell_type == "code" and cell.source != '':
+            if cell.cell_type == "code" and cell.source != "":
                 assert cell.execution_count is not None
