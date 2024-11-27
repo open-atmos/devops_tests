@@ -183,7 +183,8 @@ def test_cell_contains_output(notebook_filename):
             if cell.cell_type == "code" and cell.source != "":
                 assert cell.execution_count is not None
 
-def test_show_plot_used_instead_of_matplotlib(notebook):
+
+def test_show_plot_used_instead_of_matplotlib(notebook_filename):
     """checks if plotting is done with open_atmos_jupyter_utils show_plot()"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
@@ -191,14 +192,17 @@ def test_show_plot_used_instead_of_matplotlib(notebook):
         show_plot_used = False
         for cell in nb.cells:
             if cell.cell_type == "code":
-                if "matplotlib" or "pyplot" in cell.source:
+                if "matplotlib" in cell.source or "pyplot" in cell.source:
                     matplot_used = True
                 if "show_plot()" in cell.source:
                     show_plot_used = True
         if matplot_used and not show_plot_used:
-            raise AssertionError("if using matplotlib, please use open_atmos_jupyter_utils.show_plot()")                
+            raise AssertionError(
+                "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
+            )
 
-def test_show_anim_used_instead_of_matplotlib(notebook):
+
+def test_show_anim_used_instead_of_matplotlib(notebook_filename):
     """checks if animation generation is done with open_atmos_jupyter_utils show_anim()"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
@@ -211,4 +215,6 @@ def test_show_anim_used_instead_of_matplotlib(notebook):
                 if "show_anim()" in cell.source:
                     show_anim_used = True
         if matplot_used and not show_anim_used:
-            raise AssertionError("if using matplotlib for animations, please use open_atmos_jupyter_utils.show_anim()")
+            raise AssertionError(
+                "if using matplotlib for animations, please use open_atmos_jupyter_utils.show_anim()"
+            )
