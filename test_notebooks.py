@@ -216,5 +216,6 @@ def test_show_anim_used_instead_of_matplotlib(notebook_filename):
                     show_anim_used = True
         if matplot_used and not show_anim_used:
             raise AssertionError(
-                "if using matplotlib for animations, please use open_atmos_jupyter_utils.show_anim()"
+                """if using matplotlib for animations,
+                please use open_atmos_jupyter_utils.show_anim()"""
             )
