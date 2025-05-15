@@ -1,4 +1,4 @@
-""" executes all Jupyter notebooks tracked by git """
+"""executes all Jupyter notebooks tracked by git"""
 
 # pylint: disable=wrong-import-position
 # https://bugs.python.org/issue37373
