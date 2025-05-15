@@ -192,7 +192,11 @@ def test_show_plot_used_instead_of_matplotlib(notebook_filename):
         show_plot_used = False
         for cell in nb.cells:
             if cell.cell_type == "code":
-                if "pyplot.show()" in cell.source or "plt.show()" in cell.source or ("show()" and "from matplotlib import pyplot" in cell.source):
+                if (
+                    "pyplot.show()" in cell.source
+                    or "plt.show()" in cell.source
+                    or ("show()" and "from matplotlib import pyplot" in cell.source)
+                ):
                     matplot_used = True
                 if "show_plot()" in cell.source:
                     show_plot_used = True
@@ -210,7 +214,11 @@ def test_show_anim_used_instead_of_matplotlib(notebook_filename):
         show_anim_used = False
         for cell in nb.cells:
             if cell.cell_type == "code":
-                if "funcAnimation" in cell.source or "matplotlib.animation" in cell.source or "from matplotlib import animation" in cell.source:
+                if (
+                    "funcAnimation" in cell.source
+                    or "matplotlib.animation" in cell.source
+                    or "from matplotlib import animation" in cell.source
+                ):
                     matplot_used = True
                 if "show_anim()" in cell.source:
                     show_anim_used = True
