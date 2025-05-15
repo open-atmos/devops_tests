@@ -213,6 +213,7 @@ def test_show_anim_used_instead_of_matplotlib(notebook_filename):
                 ):
                     matplot_used = True
                 if "show_anim(" in cell.source:
+
                     show_anim_used = True
         if matplot_used and not show_anim_used:
             raise AssertionError(
