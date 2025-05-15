@@ -1,5 +1,5 @@
-""" utilities to ensure all TO-DO comments in the code are annotated
-    with an id of an open GitHub issue """
+"""utilities to ensure all TO-DO comments in the code are annotated
+with an id of an open GitHub issue"""
 
 import os
 import re

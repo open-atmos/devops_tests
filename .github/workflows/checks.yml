@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v5
     - run: pip install pylint
     - run: pip install -r requirements.txt
     - run: pylint --unsafe-load-any-extension=y --disable=fixme $(git ls-files '*.py')
@@ -39,12 +39,12 @@ jobs:
     needs: [pylint, precommit]
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-12, windows-latest]
-        python-version: ["3.8", "3.11"]
+        platform: [ubuntu-latest, macos-14, windows-latest]
+        python-version: ["3.9", "3.13"]
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -r requirements.txt
