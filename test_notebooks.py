@@ -188,22 +188,14 @@ def test_show_plot_used_instead_of_matplotlib(notebook_filename):
     """checks if plotting is done with open_atmos_jupyter_utils show_plot()"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        matplot_used = False
-        show_plot_used = False
         for cell in nb.cells:
-            if cell.cell_type == "code":
-                if (
-                    "pyplot.show()" in cell.source
-                    or "plt.show()" in cell.source
-                    or "from matplotlib import pyplot" in cell.source
-                ):
-                    matplot_used = True
-                if "show_plot()" in cell.source:
-                    show_plot_used = True
-        if matplot_used and not show_plot_used:
-            raise AssertionError(
-                "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
-            )
+            if cell.cell_type != "code":
+                continue
+            if cell.outputs[0].data.starts_with("image/"):
+                assert (
+                    cell.source[-1].starts_with("show_plot"),
+                    "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()",
+                )
 
 
 def test_show_anim_used_instead_of_matplotlib(notebook_filename):
@@ -220,7 +212,7 @@ def test_show_anim_used_instead_of_matplotlib(notebook_filename):
                     or "from matplotlib import animation" in cell.source
                 ):
                     matplot_used = True
-                if "show_anim()" in cell.source:
+                if "show_anim(" in cell.source:
                     show_anim_used = True
         if matplot_used and not show_anim_used:
             raise AssertionError(
