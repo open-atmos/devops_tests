@@ -192,10 +192,10 @@ def test_show_plot_used_instead_of_matplotlib(notebook_filename):
             if cell.cell_type != "code":
                 continue
             if cell.outputs[0].data.starts_with("image/"):
-                assert (
-                    cell.source[-1].starts_with("show_plot"),
-                    "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()",
-                )
+                if not cell.source[-1].starts_with("show_plot"):
+                    raise AssertionError(
+                        "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
+                    )
 
 
 def test_show_anim_used_instead_of_matplotlib(notebook_filename):
