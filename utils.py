@@ -10,7 +10,7 @@ from git.cmd import Git
 
 def relative_path(absolute_path):
     """returns a path relative to the repo base (converting backslashes to slashes on Windows)"""
-    relpath = os.path.relpath(absolute_path, _repo_path().absolute())
+    relpath = os.path.relpath(absolute_path, repo_path().absolute())
     posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(
         relpath
     ).as_posix()

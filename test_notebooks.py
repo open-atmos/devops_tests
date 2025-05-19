@@ -16,7 +16,6 @@ import warnings
 import nbformat
 import pint
 import pytest
-from git.cmd import Git
 
 from .utils import find_files, relative_path, repo_path
 
