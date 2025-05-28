@@ -93,7 +93,9 @@ def test_no_errors_or_warnings_in_output(notebook_filename):
         for cell in notebook.cells:
             if cell.cell_type == "code":
                 for output in cell.outputs:
-                    if "name" in output and output["name"] == "stderr":
+                    if (output.get("name") == "stderr") or (
+                        output.get("output_type") in ("error", "pyerr")
+                    ):
                         if not output["text"].startswith("[Parallel(n_jobs="):
                             raise AssertionError(output["text"])
 
