@@ -11,13 +11,11 @@ if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
 
 import gc
 import os
-import pathlib
 import warnings
 
 import nbformat
 import pint
 import pytest
-from git.cmd import Git
 
 from .utils import find_files
 
@@ -26,13 +24,6 @@ with warnings.catch_warnings():
     from nbconvert.preprocessors import ExecutePreprocessor
 
 SI = pint.UnitRegistry()
-
-
-COLAB_HEADER = f"""import sys
-if 'google.colab' in sys.modules:
-    !pip --quiet install open-atmos-jupyter-utils
-    from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{_repo_path().name}-examples')"""
 
 
 @pytest.fixture(
