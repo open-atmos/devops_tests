@@ -1,4 +1,4 @@
-files: '.py'
+files: '.py|.ipynb'
 exclude: '.git'
 default_stages: [pre-commit]
 
@@ -24,3 +24,12 @@ repos:
     rev: 2.0.1
     hooks:
       - id: enforce-notebook-run-order
+
+  - repo: local
+    hooks:
+      - id: check_notebooks
+        name: check notebooks
+        entry: python ./pre_commit_hooks/check_notebooks.py
+        language: system
+        files: '.ipynb'
+
