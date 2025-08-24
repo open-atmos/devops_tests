@@ -32,4 +32,8 @@ repos:
         entry: python ./pre_commit_hooks/check_notebooks.py
         language: system
         files: '.ipynb'
-
+      - id: check_badges
+        name: check badges
+        entry: python ./pre_commit_hooks/check_badges.py
+        language: system
+        files: '.ipynb'

@@ -6,6 +6,13 @@ from collections.abc import Sequence
 import nbformat
 
 
+def test_cell_contains_output(notebook):
+    """checks if all notebook cells have an output present"""
+    for cell in notebook.cells:
+        if cell.cell_type == "code" and cell.source != "":
+            assert cell.execution_count is not None
+
+
 def test_no_errors_or_warnings_in_output(notebook):
     """checks if all example Jupyter notebooks have clear std-err output
     (i.e., no errors or warnings) visible; except acceptable
@@ -18,6 +25,47 @@ def test_no_errors_or_warnings_in_output(notebook):
                         raise AssertionError(output["text"])
 
 
+def test_show_plot_used_instead_of_matplotlib(notebook):
+    """checks if plotting is done with open_atmos_jupyter_utils show_plot()"""
+    matplot_used = False
+    show_plot_used = False
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            if (
+                "pyplot.show()" in cell.source
+                or "plt.show()" in cell.source
+                or "from matplotlib import pyplot" in cell.source
+            ):
+                matplot_used = True
+            if "show_plot()" in cell.source:
+                show_plot_used = True
+    if matplot_used and not show_plot_used:
+        raise AssertionError(
+            "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
+        )
+
+
+def test_show_anim_used_instead_of_matplotlib(notebook):
+    """checks if animation generation is done with open_atmos_jupyter_utils show_anim()"""
+    matplot_used = False
+    show_anim_used = False
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            if (
+                "funcAnimation" in cell.source
+                or "matplotlib.animation" in cell.source
+                or "from matplotlib import animation" in cell.source
+            ):
+                matplot_used = True
+            if "show_anim()" in cell.source:
+                show_anim_used = True
+    if matplot_used and not show_anim_used:
+        raise AssertionError(
+            """if using matplotlib for animations,
+            please use open_atmos_jupyter_utils.show_anim()"""
+        )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
@@ -28,6 +76,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         with open(filename, encoding="utf8") as notebook_file:
             notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
             try:
+                test_cell_contains_output(notebook)
                 test_no_errors_or_warnings_in_output(notebook)
             except ValueError as exc:
                 retval = 1
