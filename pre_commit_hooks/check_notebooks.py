@@ -77,11 +77,18 @@ def test_jetbrains_bug_py_66491(notebook):
             raise AssertionError(
                 "Notebook cell missing execution_count attribute. (May be due to PyCharm bug, see: https://youtrack.jetbrains.com/issue/PY-66491 )"
             )
+            return 1
+    return 0
 
 
 def test_file_size(notebook_filename):
     """Test if notebook is smaller than an arbitrary size limit"""
-    assert os.stat(notebook_filename).st_size * SI.byte < 2 * SI.megabyte
+    if not os.stat(notebook_filename).st_size * SI.byte < 2 * SI.megabyte:
+        raise AssertionError(
+            f"Notebook '{notebook_filename}' has size larger than {2 * SI.megabyte}."
+        )
+        return 1
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -93,13 +100,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     for filename in args.filenames:
         with open(filename, encoding="utf8") as notebook_file:
             notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
-            try:
-                test_file_size(filename)
-                test_jetbrains_bug_py_66491(notebook)
-                test_cell_contains_output(notebook)
-                test_no_errors_or_warnings_in_output(notebook)
-            except ValueError as exc:
-                retval = 1
+            retval |= test_file_size(filename)
+            retval |= test_jetbrains_bug_py_66491(notebook)
+            retval |= test_cell_contains_output(notebook)
+            retval |= test_no_errors_or_warnings_in_output(notebook)
     return retval
 
 
