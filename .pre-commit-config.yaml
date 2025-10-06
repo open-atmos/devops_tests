@@ -1,4 +1,3 @@
-files: '.py|.ipynb'
 exclude: '.git'
 default_stages: [pre-commit]
 
@@ -27,13 +26,8 @@ repos:
 
   - repo: local
     hooks:
-      - id: check_notebooks
+      - id: check-notebooks
         name: check notebooks
-        entry: python ./pre_commit_hooks/check_notebooks.py
-        language: system
-        files: '.ipynb'
-      - id: check_badges
-        name: check badges
-        entry: python ./pre_commit_hooks/check_badges.py
-        language: system
+        entry: check_notebooks
+        language: python
         files: '.ipynb'
