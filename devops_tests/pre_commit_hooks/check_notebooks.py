@@ -28,45 +28,45 @@ def test_no_errors_or_warnings_in_output(notebook):
                         raise AssertionError(output["text"])
 
 
-def test_jupyter_utils_used_intead_of_matplotlib(notebooks):
-    def test_show_plot_used_instead_of_matplotlib(notebook):
-        """checks if plotting is done with open_atmos_jupyter_utils show_plot()"""
-        matplot_used = False
-        show_plot_used = False
-        for cell in notebook.cells:
-            if cell.cell_type == "code":
-                if (
-                    "pyplot.show()" in cell.source
-                    or "plt.show()" in cell.source
-                    or "from matplotlib import pyplot" in cell.source
-                ):
-                    matplot_used = True
-                if "show_plot()" in cell.source:
-                    show_plot_used = True
-        if matplot_used and not show_plot_used:
-            raise AssertionError(
-                "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
-            )
+def test_show_plot_used_instead_of_matplotlib(notebook):
+    """checks if plotting is done with open_atmos_jupyter_utils show_plot()"""
+    matplot_used = False
+    show_plot_used = False
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            if (
+                "pyplot.show()" in cell.source
+                or "plt.show()" in cell.source
+                or "from matplotlib import pyplot" in cell.source
+            ):
+                matplot_used = True
+            if "show_plot()" in cell.source:
+                show_plot_used = True
+    if matplot_used and not show_plot_used:
+        raise AssertionError(
+            "if using matplotlib, please use open_atmos_jupyter_utils.show_plot()"
+        )
 
-    def test_show_anim_used_instead_of_matplotlib(notebook):
-        """checks if animation generation is done with open_atmos_jupyter_utils show_anim()"""
-        matplot_used = False
-        show_anim_used = False
-        for cell in notebook.cells:
-            if cell.cell_type == "code":
-                if (
-                    "funcAnimation" in cell.source
-                    or "matplotlib.animation" in cell.source
-                    or "from matplotlib import animation" in cell.source
-                ):
-                    matplot_used = True
-                if "show_anim()" in cell.source:
-                    show_anim_used = True
-        if matplot_used and not show_anim_used:
-            raise AssertionError(
-                """if using matplotlib for animations,
-                please use open_atmos_jupyter_utils.show_anim()"""
-            )
+
+def test_show_anim_used_instead_of_matplotlib(notebook):
+    """checks if animation generation is done with open_atmos_jupyter_utils show_anim()"""
+    matplot_used = False
+    show_anim_used = False
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            if (
+                "funcAnimation" in cell.source
+                or "matplotlib.animation" in cell.source
+                or "from matplotlib import animation" in cell.source
+            ):
+                matplot_used = True
+            if "show_anim()" in cell.source:
+                show_anim_used = True
+    if matplot_used and not show_anim_used:
+        raise AssertionError(
+            """if using matplotlib for animations,
+            please use open_atmos_jupyter_utils.show_anim()"""
+        )
 
 
 def test_jetbrains_bug_py_66491(notebook):
@@ -87,16 +87,20 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     retval = 0
     print(args.filenames)
+    test_functions = [
+        test_cell_contains_output,
+        test_no_errors_or_warnings_in_output,
+        test_jetbrains_bug_py_66491,
+    ]
     for filename in args.filenames:
         with open(filename, encoding="utf8") as notebook_file:
             notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
-            try:
-                test_jetbrains_bug_py_66491(notebook)
-                test_cell_contains_output(notebook)
-                # retval |= test_no_errors_or_warnings_in_output(notebook)
-            except Exception as e:
-                print(e)
-                retval = 1
+            for func in test_functions:
+                try:
+                    func(notebook)
+                except Exception as e:
+                    print(e)
+                    retval = 1
     return retval
 
 
