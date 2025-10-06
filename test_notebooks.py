@@ -11,13 +11,11 @@ if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
 
 import gc
 import os
-import pathlib
 import warnings
 
 import nbformat
 import pint
 import pytest
-from git.cmd import Git
 
 from .utils import find_files
 
@@ -26,30 +24,6 @@ with warnings.catch_warnings():
     from nbconvert.preprocessors import ExecutePreprocessor
 
 SI = pint.UnitRegistry()
-
-
-def _relative_path(absolute_path):
-    """returns a path relative to the repo base (converting backslashes to slashes on Windows)"""
-    relpath = os.path.relpath(absolute_path, _repo_path().absolute())
-    posixpath_to_make_it_usable_in_urls_even_on_windows = pathlib.Path(
-        relpath
-    ).as_posix()
-    return posixpath_to_make_it_usable_in_urls_even_on_windows
-
-
-def _repo_path():
-    """returns absolute path to the repo base (ignoring .git location if in a submodule)"""
-    path = pathlib.Path(__file__)
-    while not (path.is_dir() and Git(path).rev_parse("--git-dir") == ".git"):
-        path = path.parent
-    return path
-
-
-COLAB_HEADER = f"""import sys
-if 'google.colab' in sys.modules:
-    !pip --quiet install open-atmos-jupyter-utils
-    from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{_repo_path().name}-examples')"""
 
 
 @pytest.fixture(
@@ -77,7 +51,6 @@ def test_run_notebooks(notebook_filename, tmp_path):
 
     # so that nbconvert perplexities are reported here, and not at some dtor test later on
     gc.collect()
-
 
 def test_file_size(notebook_filename):
     """checks if all example Jupyter notebooks have file size less than an arbitrary limit"""
@@ -229,3 +202,4 @@ def test_show_anim_used_instead_of_matplotlib(notebook_filename):
                 """if using matplotlib for animations,
                 please use open_atmos_jupyter_utils.show_anim()"""
             )
+
