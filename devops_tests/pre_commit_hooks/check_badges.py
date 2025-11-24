@@ -9,13 +9,13 @@ import nbformat
 
 from devops_tests.utils import relative_path, repo_path
 
-COLAB_HEADER = f"""import sys
+COLAB_HEADER = f"""import os, sys
+os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
     pip_install_on_colab('{repo_path().name}-examples')
-    import os
-    os.environ['NUMBA_THREADING_LAYER']='omp'"""
+"""
 
 
 def _preview_badge_markdown(absolute_path):
