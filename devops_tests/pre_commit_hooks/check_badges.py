@@ -7,7 +7,7 @@ from collections.abc import Sequence
 
 import nbformat
 
-from devops_tests.utils import relative_path, repo_path
+from ..utils import relative_path, repo_path
 
 COLAB_HEADER = f"""import os, sys
 os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
