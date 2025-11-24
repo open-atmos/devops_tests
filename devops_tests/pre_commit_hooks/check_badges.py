@@ -1,10 +1,13 @@
+#!/usr/bin/env python3
+
 from __future__ import annotations
 
 import argparse
 from collections.abc import Sequence
 
 import nbformat
-from utils import relative_path, repo_path
+
+from devops_tests.utils import relative_path, repo_path
 
 COLAB_HEADER = f"""import sys
 if 'google.colab' in sys.modules:
