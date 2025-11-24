@@ -10,7 +10,9 @@ COLAB_HEADER = f"""import sys
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{repo_path().name}-examples')"""
+    pip_install_on_colab('{repo_path().name}-examples')
+    import os
+    os.environ['NUMBA_THREADING_LAYER']='omp'"""
 
 
 def _preview_badge_markdown(absolute_path):
