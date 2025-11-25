@@ -10,18 +10,71 @@ from collections.abc import Sequence
 
 import nbformat
 
-from devops_tests.utils import relative_path, repo_path
-
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.insert(0, repo_root)
+from devops_tests.utils import (  # pylint: disable=wrong-import-position
+    relative_path,
+    repo_path,
+)
 
-COLAB_HEADER = f"""import os, sys
+HEADER = f"""import os, sys
 os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{repo_path().name}-examples')
-"""
+    pip_install_on_colab('{repo_path().name}-examples')"""
+
+HEADER_KEY_PATTERNS = [
+    "install open-atmos-jupyter-utils",
+    "google.colab",
+    "pip_install_on_colab",
+]
+
+
+def is_colab_header(cell_source: str) -> bool:
+    """Return True if the cell looks like a Colab header."""
+    return all(pat in cell_source for pat in HEADER_KEY_PATTERNS)
+
+
+def fix_colab_header(notebook_path):
+    nb = nbformat.read(notebook_path, as_version=nbformat.NO_CONVERT)
+
+    header_index = None
+    for idx, cell in enumerate(nb.cells):
+        if cell.cell_type == "code" and is_colab_header(cell.source):
+            header_index = idx
+            break
+
+    modified = False
+    if header_index is not None:
+        if nb.cells[header_index].source != HEADER:
+            nb.cells[header_index].source = HEADER
+            modified = True
+        if header_index != 2:
+            nb.cells.insert(2, nb.cells.pop(header_index))
+            modified = True
+    else:
+        new_cell = nbformat.v4.new_code_cell(HEADER)
+        nb.cells.insert(2, new_cell)
+        modified = True
+    if modified:
+        nbformat.write(nb, notebook_path)
+    return modified
+
+
+def print_hook_summary(reformatted_files, unchanged_files):
+    """Print a Black-style summary."""
+    for f in reformatted_files:
+        print(f"\nreformatted {f}")
+
+    total_ref = len(reformatted_files)
+    total_unchanged = len(unchanged_files)
+    if total_ref > 0:
+        print("\nAll done! ✨ 🍰 ✨")
+        print(
+            f"{total_ref} file{'s' if total_ref != 1 else ''} reformatted, "
+            f"{total_unchanged} file{'s' if total_unchanged != 1 else ''} left unchanged."
+        )
 
 
 def _preview_badge_markdown(absolute_path):
@@ -66,17 +119,17 @@ def test_first_cell_contains_three_badges(notebook_filename):
     """checks if all notebooks feature three badges in the first cell"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        if nb.cells[0].cell_type != "markdown":
-            raise ValueError("First cell is not a markdown cell")
-        lines = nb.cells[0].source.split("\n")
-        if len(lines) != 3:
-            raise ValueError("First cell does not contain exactly 3 lines (badges)")
-        if lines[0] != _preview_badge_markdown(notebook_filename):
-            raise ValueError("First badge does not match Github preview badge")
-        if lines[1] != _mybinder_badge_markdown(notebook_filename):
-            raise ValueError("Second badge does not match MyBinder badge")
-        if lines[2] != _colab_badge_markdown(notebook_filename):
-            raise ValueError("Third badge does not match Colab badge")
+    if nb.cells[0].cell_type != "markdown":
+        raise ValueError("First cell is not a markdown cell")
+    lines = nb.cells[0].source.split("\n")
+    if len(lines) != 3:
+        raise ValueError("First cell does not contain exactly 3 lines (badges)")
+    if lines[0] != _preview_badge_markdown(notebook_filename):
+        raise ValueError("First badge does not match Github preview badge")
+    if lines[1] != _mybinder_badge_markdown(notebook_filename):
+        raise ValueError("Second badge does not match MyBinder badge")
+    if lines[2] != _colab_badge_markdown(notebook_filename):
+        raise ValueError("Third badge does not match Colab badge")
 
 
 def test_second_cell_is_a_markdown_cell(notebook_filename):
@@ -84,20 +137,8 @@ def test_second_cell_is_a_markdown_cell(notebook_filename):
     (hopefully clarifying what the example is about)"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        if nb.cells[1].cell_type != "markdown":
-            raise ValueError("Second cell is not a markdown cell")
-
-
-def test_third_cell_contains_colab_header(notebook_filename):
-    """checks if all notebooks feature a Colab-magic cell"""
-    with open(notebook_filename, encoding="utf8") as fp:
-        nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        if nb.cells[2].cell_type != "code":
-            raise ValueError("Third cell is not a code cell")
-        if nb.cells[2].source != COLAB_HEADER:
-            raise ValueError(
-                f"Third cell does not match COLAB_HEADER: \n{COLAB_HEADER}"
-            )
+    if nb.cells[1].cell_type != "markdown":
+        raise ValueError("Second cell is not a markdown cell")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -106,20 +147,30 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     args = parser.parse_args(argv)
 
-    failing_files = []
+    failed_files = False
+    reformatted_files = []
+    unchanged_files = []
     for filename in args.filenames:
+        try:
+            modified = fix_colab_header(filename)
+            if modified:
+                reformatted_files.append(str(filename))
+            else:
+                unchanged_files.append(str(filename))
+        except ValueError as exc:
+            print(f"[ERROR] {filename}: {exc}")
+            failed_files = True
         try:
             test_notebook_has_at_least_three_cells(filename)
             test_first_cell_contains_three_badges(filename)
             test_second_cell_is_a_markdown_cell(filename)
-            test_third_cell_contains_colab_header(filename)
+
         except ValueError as exc:
             print(f"[ERROR] {filename}: {exc}")
-            failing_files.append(filename, exc)
-    if failing_files:
-        print(f"\nNotebooks failed badge checks: {', '.join(failing_files)}")
-        return 1
-    return 0
+            failed_files = True
+
+    print_hook_summary(reformatted_files, unchanged_files)
+    return 1 if (reformatted_files or failed_files) else 0
 
 
 if __name__ == "__main__":

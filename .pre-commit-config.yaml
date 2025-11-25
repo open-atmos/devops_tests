@@ -6,11 +6,6 @@ repos:
     hooks:
       - id: black
 
-  - repo: https://github.com/timothycrosley/isort
-    rev: 6.1.0
-    hooks:
-      - id: isort
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -29,9 +24,7 @@ repos:
         name: check notebooks
         entry: hooks/check_notebooks.py
         additional_dependencies:
-          - "."
           - nbformat
-          - pytest
         language: python
         types: [jupyter]
 
@@ -42,5 +35,6 @@ repos:
           - "."
           - nbformat
           - pytest
+          - gitpython
         language: python
         types: [jupyter]
