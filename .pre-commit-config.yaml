@@ -28,13 +28,19 @@ repos:
       - id: check-notebooks
         name: check notebooks
         entry: hooks/check_notebooks.py
-        additional_dependencies: ["."]
+        additional_dependencies:
+          - "."
+          - nbformat
+          - pytest
         language: python
         types: [jupyter]
 
       - id: check-badges
         name: check badges
         entry: hooks/check_badges.py
-        additional_dependencies: ["."]
+        additional_dependencies:
+          - "."
+          - nbformat
+          - pytest
         language: python
         types: [jupyter]
