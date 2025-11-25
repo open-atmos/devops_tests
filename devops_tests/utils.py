@@ -5,7 +5,7 @@ Utils functions to reuse in different parts of the codebase
 import os
 import pathlib
 
-from git.cmd import Git
+from git import Git
 
 
 def find_files(path_to_folder_from_project_root=".", file_extension=None):

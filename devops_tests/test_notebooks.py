@@ -1,18 +1,19 @@
-import sys
-
-if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
-    import asyncio
-
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+"""test execution of notebooks in the repository"""
 
 import gc
 import os
+import sys
 import warnings
 
 import nbformat
 import pytest
 
 from .utils import find_files
+
+if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
+    import asyncio
+
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")

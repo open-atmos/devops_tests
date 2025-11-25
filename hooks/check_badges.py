@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
-
+"""
+Checks whether notebooks contain badges."""
 from __future__ import annotations
 
 import argparse
+import os
+import sys
 from collections.abc import Sequence
 
 import nbformat
 
-from ..utils import relative_path, repo_path
+from devops_tests.utils import relative_path, repo_path
+
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
+sys.path.insert(0, repo_root)
 
 COLAB_HEADER = f"""import os, sys
 os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
@@ -48,18 +54,29 @@ def _colab_badge_markdown(absolute_path):
     return f"[![launch on Colab]({svg_badge_url})]({link})"
 
 
-def test_first_cell_contains_three_badges(notebook_filename):
-    """checks if all notebooks feature Github preview, mybinder and Colab badges
-    (in the first cell)"""
+def test_notebook_has_at_least_three_cells(notebook_filename):
+    """checks if all notebooks have at least three cells"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        assert len(nb.cells) > 0
-        assert nb.cells[0].cell_type == "markdown"
+        if len(nb.cells) < 3:
+            raise ValueError("Notebook should have at least 4 cells")
+
+
+def test_first_cell_contains_three_badges(notebook_filename):
+    """checks if all notebooks feature three badges in the first cell"""
+    with open(notebook_filename, encoding="utf8") as fp:
+        nb = nbformat.read(fp, nbformat.NO_CONVERT)
+        if nb.cells[0].cell_type != "markdown":
+            raise ValueError("First cell is not a markdown cell")
         lines = nb.cells[0].source.split("\n")
-        assert len(lines) == 3
-        assert lines[0] == _preview_badge_markdown(notebook_filename)
-        assert lines[1] == _mybinder_badge_markdown(notebook_filename)
-        assert lines[2] == _colab_badge_markdown(notebook_filename)
+        if len(lines) != 3:
+            raise ValueError("First cell does not contain exactly 3 lines (badges)")
+        if lines[0] != _preview_badge_markdown(notebook_filename):
+            raise ValueError("First badge does not match Github preview badge")
+        if lines[1] != _mybinder_badge_markdown(notebook_filename):
+            raise ValueError("Second badge does not match MyBinder badge")
+        if lines[2] != _colab_badge_markdown(notebook_filename):
+            raise ValueError("Third badge does not match Colab badge")
 
 
 def test_second_cell_is_a_markdown_cell(notebook_filename):
@@ -67,33 +84,42 @@ def test_second_cell_is_a_markdown_cell(notebook_filename):
     (hopefully clarifying what the example is about)"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        assert len(nb.cells) > 1
-        assert nb.cells[1].cell_type == "markdown"
+        if nb.cells[1].cell_type != "markdown":
+            raise ValueError("Second cell is not a markdown cell")
 
 
 def test_third_cell_contains_colab_header(notebook_filename):
     """checks if all notebooks feature a Colab-magic cell"""
     with open(notebook_filename, encoding="utf8") as fp:
         nb = nbformat.read(fp, nbformat.NO_CONVERT)
-        assert len(nb.cells) > 2
-        assert nb.cells[2].cell_type == "code"
-        assert nb.cells[2].source == COLAB_HEADER
+        if nb.cells[2].cell_type != "code":
+            raise ValueError("Third cell is not a code cell")
+        if nb.cells[2].source != COLAB_HEADER:
+            raise ValueError(
+                f"Third cell does not match COLAB_HEADER: \n{COLAB_HEADER}"
+            )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """collect failed notebook checks"""
     parser = argparse.ArgumentParser()
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     args = parser.parse_args(argv)
 
-    retval = 0
+    failing_files = []
     for filename in args.filenames:
         try:
+            test_notebook_has_at_least_three_cells(filename)
             test_first_cell_contains_three_badges(filename)
             test_second_cell_is_a_markdown_cell(filename)
             test_third_cell_contains_colab_header(filename)
         except ValueError as exc:
-            retval = 1
-    return retval
+            print(f"[ERROR] {filename}: {exc}")
+            failing_files.append(filename, exc)
+    if failing_files:
+        print(f"\nNotebooks failed badge checks: {', '.join(failing_files)}")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

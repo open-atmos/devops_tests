@@ -22,3 +22,22 @@ repos:
     rev: 2.0.1
     hooks:
       - id: enforce-notebook-run-order
+
+  - repo: local
+    hooks:
+      - id: check-notebooks
+        name: check notebooks
+        entry: hooks/check_notebooks.py
+        additional_dependencies:
+          - nbformat
+        language: python
+        types: [jupyter]
+
+      - id: check-badges
+        name: check badges
+        entry: hooks/check_badges.py
+        additional_dependencies:
+          - nbformat
+          - gitpython
+        language: python
+        types: [jupyter]
