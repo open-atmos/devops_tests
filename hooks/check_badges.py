@@ -37,6 +37,7 @@ def is_colab_header(cell_source: str) -> bool:
 
 
 def fix_colab_header(notebook_path):
+    """Check Colab-magic cell and fix if is misspelled, in wrong position or not exists"""
     nb = nbformat.read(notebook_path, as_version=nbformat.NO_CONVERT)
 
     header_index = None
