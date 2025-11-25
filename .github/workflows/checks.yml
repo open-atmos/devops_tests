@@ -20,6 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v5
+    - run: pip install pytest, nbformat, gitpython
     - run: pip install pylint
     - run: pylint --unsafe-load-any-extension=y --disable=fixme $(git ls-files '*.py')
 
