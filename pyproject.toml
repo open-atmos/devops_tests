@@ -3,7 +3,7 @@ requires = ["setuptools >= 77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ['devops_tests']
+packages = ['hooks']
 
 [project]
 name = "devops_tests"
@@ -27,5 +27,5 @@ authors = [
 dynamic = ['version']
 
 [project.scripts]
-check_notebooks = "devops_tests.hooks.check_notebooks:main"
-check_badges = "devops_tests.hooks.check_badges:main"
+check_notebooks = "hooks.check_notebooks:main"
+check_badges = "hooks.check_badges:main"

@@ -10,8 +10,6 @@
   name: check badges
   description: check badges in Jupyter Notebook
   entry: check_badges
-  additional_dependencies:
-    - "."
   language: python
   stages: [pre-commit]
   types: [jupyter]

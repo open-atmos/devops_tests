@@ -4,13 +4,11 @@ Checks whether notebooks contain badges."""
 from __future__ import annotations
 
 import argparse
-import os
-import sys
 from collections.abc import Sequence
 
 import nbformat
 
-from devops_tests.utils import (
+from .utils import (
     relative_path,
     repo_path,
 )
