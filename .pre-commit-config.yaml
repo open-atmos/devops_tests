@@ -36,6 +36,6 @@ repos:
           - nbformat
           - pytest
           - gitpython
-        args: [--repo-name=devops_tests]
+        args: [--fix-header, --repo-name=devops_tests]
         language: python
         types: [jupyter]

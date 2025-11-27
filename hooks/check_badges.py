@@ -8,8 +8,6 @@ from collections.abc import Sequence
 
 import nbformat
 
-from .utils import relative_path
-
 
 def header_text(repo_name):
     return f"""import os, sys
@@ -32,27 +30,34 @@ def is_colab_header(cell_source: str) -> bool:
     return all(pat in cell_source for pat in HEADER_KEY_PATTERNS)
 
 
-def fix_colab_header(notebook_path, repo_name):
+def check_colab_header(notebook_path, repo_name, fix):
     """Check Colab-magic cell and fix if is misspelled, in wrong position or not exists"""
     nb = nbformat.read(notebook_path, as_version=nbformat.NO_CONVERT)
 
     header_index = None
-    header = header_text(repo_name)
+    correct_header = header_text(repo_name)
+    modified = False
+
+    if not fix:
+        if nb.cells[2].cell_type != "code" or nb.cells[2].source != correct_header:
+            raise ValueError("Third cell does not contain correct header")
+        else:
+            return modified
+
     for idx, cell in enumerate(nb.cells):
         if cell.cell_type == "code" and is_colab_header(cell.source):
             header_index = idx
             break
 
-    modified = False
     if header_index is not None:
-        if nb.cells[header_index].source != header:
-            nb.cells[header_index].source = header
+        if nb.cells[header_index].source != correct_header:
+            nb.cells[header_index].source = correct_header
             modified = True
         if header_index != 2:
             nb.cells.insert(2, nb.cells.pop(header_index))
             modified = True
     else:
-        new_cell = nbformat.v4.new_code_cell(header)
+        new_cell = nbformat.v4.new_code_cell(correct_header)
         nb.cells.insert(2, new_cell)
         modified = True
     if modified:
@@ -140,6 +145,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """collect failed notebook checks"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-name")
+    parser.add_argument("--fix-header", action="store_true")
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     args = parser.parse_args(argv)
     failed_files = False
@@ -147,7 +153,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     unchanged_files = []
     for filename in args.filenames:
         try:
-            modified = fix_colab_header(filename, repo_name=args.repo_name)
+            modified = check_colab_header(
+                filename, repo_name=args.repo_name, fix=args.fix_header
+            )
             if modified:
                 reformatted_files.append(str(filename))
             else:
