@@ -28,4 +28,4 @@ dynamic = ['version']
 
 [project.scripts]
 check_notebooks = "devops_tests.hooks.check_notebooks:main"
-check_badges = "devops_tests.devops_tests.hooks.check_badges:main"
+check_badges = "devops_tests.hooks.check_badges:main"
