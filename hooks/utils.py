@@ -40,6 +40,7 @@ def relative_path(absolute_path):
 def original_repo_path() -> pathlib.Path:
     """Path to the original (non-temp) repository root during pre-commit."""
     root = os.environ.get("PRE_COMMIT_REPOROOT")
+    print(root)
     if root:
         return pathlib.Path(root).resolve()
 
