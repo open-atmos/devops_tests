@@ -10,7 +10,7 @@ import nbformat
 
 from .utils import (
     relative_path,
-    repo_path,
+    original_repo_name,
 )
 
 HEADER = f"""import os, sys
@@ -18,7 +18,7 @@ os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatib
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{repo_path().name}-examples')"""
+    pip_install_on_colab('{original_repo_name()}-examples')"""
 
 HEADER_KEY_PATTERNS = [
     "install open-atmos-jupyter-utils",
@@ -80,7 +80,7 @@ def _preview_badge_markdown(absolute_path):
         + "label=render%20on&logo=github&color=87ce3e&message=GitHub"
     )
     link = (
-        f"https://github.com/open-atmos/{repo_path().name}/blob/main/"
+        f"https://github.com/open-atmos/{original_repo_name()}/blob/main/"
         + f"{relative_path(absolute_path)}"
     )
     return f"[![preview notebook]({svg_badge_url})]({link})"
@@ -89,7 +89,7 @@ def _preview_badge_markdown(absolute_path):
 def _mybinder_badge_markdown(absolute_path):
     svg_badge_url = "https://mybinder.org/badge_logo.svg"
     link = (
-        f"https://mybinder.org/v2/gh/open-atmos/{repo_path().name}.git/main?urlpath=lab/tree/"
+        f"https://mybinder.org/v2/gh/open-atmos/{original_repo_name()}.git/main?urlpath=lab/tree/"
         + f"{relative_path(absolute_path)}"
     )
     return f"[![launch on mybinder.org]({svg_badge_url})]({link})"
@@ -98,7 +98,7 @@ def _mybinder_badge_markdown(absolute_path):
 def _colab_badge_markdown(absolute_path):
     svg_badge_url = "https://colab.research.google.com/assets/colab-badge.svg"
     link = (
-        f"https://colab.research.google.com/github/open-atmos/{repo_path().name}/blob/main/"
+        f"https://colab.research.google.com/github/open-atmos/{original_repo_name()}/blob/main/"
         + f"{relative_path(absolute_path)}"
     )
     return f"[![launch on Colab]({svg_badge_url})]({link})"
