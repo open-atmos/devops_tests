@@ -32,7 +32,6 @@ repos:
         name: check badges
         entry: check_badges
         additional_dependencies:
-          - "."
           - nbformat
           - pytest
           - gitpython
