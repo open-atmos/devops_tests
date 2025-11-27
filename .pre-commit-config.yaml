@@ -22,7 +22,7 @@ repos:
     hooks:
       - id: check-notebooks
         name: check notebooks
-        entry: hooks/check_notebooks.py
+        entry: check_notebooks
         additional_dependencies:
           - nbformat
         language: python
@@ -30,7 +30,7 @@ repos:
 
       - id: check-badges
         name: check badges
-        entry: hooks/check_badges.py
+        entry: check_badges
         additional_dependencies:
           - "."
           - nbformat

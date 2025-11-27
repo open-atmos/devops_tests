@@ -10,9 +10,7 @@ from collections.abc import Sequence
 
 import nbformat
 
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-sys.path.insert(0, repo_root)
-from devops_tests.utils import (  # pylint: disable=wrong-import-position
+from devops_tests.utils import (
     relative_path,
     repo_path,
 )
