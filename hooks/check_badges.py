@@ -122,9 +122,7 @@ def test_first_cell_contains_three_badges(notebook_filename):
     if len(lines) != 3:
         raise ValueError("First cell does not contain exactly 3 lines (badges)")
     if lines[0] != _preview_badge_markdown(notebook_filename):
-        raise ValueError(
-            f"First badge does not match Github preview badge {_preview_badge_markdown(notebook_filename)}, {notebook_filename}"
-        )
+        raise ValueError("First badge does not match Github preview badge")
     if lines[1] != _mybinder_badge_markdown(notebook_filename):
         raise ValueError("Second badge does not match MyBinder badge")
     if lines[2] != _colab_badge_markdown(notebook_filename):
