@@ -42,7 +42,7 @@ def check_colab_header(notebook_path, repo_name, fix):
     if not fix:
         if nb.cells[2].cell_type != "code" or nb.cells[2].source != correct_header:
             raise ValueError("Third cell does not contain correct header")
-    return modified
+        return modified
 
     for idx, cell in enumerate(nb.cells):
         if cell.cell_type == "code" and is_colab_header(cell.source):
