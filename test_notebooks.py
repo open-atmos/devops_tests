@@ -8,7 +8,7 @@ import warnings
 import nbformat
 import pytest
 
-from .utils import find_files
+from hooks.utils import find_files
 
 if sys.platform == "win32" and sys.version_info[:2] >= (3, 7):
     import asyncio
