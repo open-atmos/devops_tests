@@ -20,8 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v5
+    - run: pip install .
     - run: pip install pylint
-    - run: pip install -r requirements.txt
     - run: pylint --unsafe-load-any-extension=y --disable=fixme $(git ls-files '*.py')
 
   precommit:
@@ -30,6 +30,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
       - run: |
+          pip install .
           pip install pre-commit
           pre-commit clean
           pre-commit autoupdate
@@ -47,8 +48,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -r requirements.txt
+      - run: pip install .
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pytest -vv -rP -We .
-

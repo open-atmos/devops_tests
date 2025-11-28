@@ -9,7 +9,7 @@ from binaryornot.check import is_binary
 from ghapi.all import GhApi, paged
 from git.cmd import Git
 
-from .utils import find_files
+from hooks.utils import find_files
 
 
 def _grep(filepath, regex):
