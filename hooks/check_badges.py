@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=missing-function-docstring
 """
 Checks whether notebooks contain badges."""
 from __future__ import annotations
@@ -41,8 +42,7 @@ def check_colab_header(notebook_path, repo_name, fix):
     if not fix:
         if nb.cells[2].cell_type != "code" or nb.cells[2].source != correct_header:
             raise ValueError("Third cell does not contain correct header")
-        else:
-            return modified
+    return modified
 
     for idx, cell in enumerate(nb.cells):
         if cell.cell_type == "code" and is_colab_header(cell.source):
