@@ -22,7 +22,7 @@ dependencies = [
 readme = "README.md"
 license = "GPL-3.0-only"
 authors = [
-    {name = "https://github.com/open-atmos/devops_tests/graphs/contributors", email = "sylwester.arabas@agh.edu.pl"}
+    {name = "https://github.com/open-atmos/devops_tests/graphs/contributors", email = "azaba@agh.edu.pl"}
 ]
 dynamic = ['version']
 
