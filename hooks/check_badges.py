@@ -10,13 +10,15 @@ from collections.abc import Sequence
 import nbformat
 
 
-def header_text(repo_name):
+def header_text(repo_name, version):
+    if version is None:
+        version = ""
     return f"""import os, sys
 os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
-    pip_install_on_colab('{repo_name}-examples')"""
+    pip_install_on_colab('{repo_name}-examples{version}', '{repo_name}{version}')"""
 
 
 HEADER_KEY_PATTERNS = [
@@ -31,12 +33,12 @@ def is_colab_header(cell_source: str) -> bool:
     return all(pat in cell_source for pat in HEADER_KEY_PATTERNS)
 
 
-def check_colab_header(notebook_path, repo_name, fix):
+def check_colab_header(notebook_path, repo_name, fix, version):
     """Check Colab-magic cell and fix if is misspelled, in wrong position or not exists"""
     nb = nbformat.read(notebook_path, as_version=nbformat.NO_CONVERT)
 
     header_index = None
-    correct_header = header_text(repo_name)
+    correct_header = header_text(repo_name, version)
     modified = False
 
     if not fix:
@@ -146,6 +148,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-name")
     parser.add_argument("--fix-header", action="store_true")
+    parser.add_argument("--pip-install-on-colab-version")
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     args = parser.parse_args(argv)
     failed_files = False
@@ -154,7 +157,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     for filename in args.filenames:
         try:
             modified = check_colab_header(
-                filename, repo_name=args.repo_name, fix=args.fix_header
+                filename,
+                repo_name=args.repo_name,
+                fix=args.fix_header,
+                version=args.pip_install_on_colab_version,
             )
             if modified:
                 reformatted_files.append(str(filename))
