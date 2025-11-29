@@ -10,11 +10,12 @@ from collections.abc import Sequence
 import nbformat
 
 
-def header_text(repo_name, version):
+def _header_cell_text(repo_name, version):
     if version is None:
         version = ""
     return f"""import os, sys
-os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
+if sys.platform != 'darwin': # TODO #1749
+    os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
