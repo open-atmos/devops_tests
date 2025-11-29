@@ -39,7 +39,7 @@ def check_colab_header(notebook_path, repo_name, fix, version):
     nb = nbformat.read(notebook_path, as_version=nbformat.NO_CONVERT)
 
     header_index = None
-    correct_header = header_text(repo_name, version)
+    correct_header = _header_cell_text(repo_name, version)
     modified = False
 
     if not fix:
