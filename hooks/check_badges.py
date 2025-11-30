@@ -14,7 +14,7 @@ def _header_cell_text(repo_name, version):
     if version is None:
         version = ""
     return f"""import os, sys
-if sys.platform != 'darwin': # TODO #1749
+if sys.platform != 'darwin':
     os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
