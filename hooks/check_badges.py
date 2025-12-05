@@ -14,8 +14,7 @@ def _header_cell_text(repo_name, version):
     if version is None:
         version = ""
     return f"""import os, sys
-if sys.platform != 'darwin':
-    os.environ['NUMBA_THREADING_LAYER'] = 'omp'  # PySDM and PyMPDATA are incompatible with TBB threads
+os.environ['NUMBA_THREADING_LAYER'] = 'workqueue'  # PySDM & PyMPDATA don't work with TBB; OpenMP has extra dependencies on macOS
 if 'google.colab' in sys.modules:
     !pip --quiet install open-atmos-jupyter-utils
     from open_atmos_jupyter_utils import pip_install_on_colab
