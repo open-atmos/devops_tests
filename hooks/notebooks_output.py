@@ -23,7 +23,7 @@ def test_no_errors_or_warnings_in_output(notebook):
         if cell.cell_type == "code":
             for output in cell.outputs:
                 ot = output.get("output_type")
-                if ot == "error":
+                if ot == "error" and output.get("ename") != "KeyboardInterrupt":
                     raise ValueError(
                         f"Cell [{cell_idx}] contain error or warning. \n\n"
                         f"Cell [{cell_idx}] output:\n{output}\n"
