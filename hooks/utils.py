@@ -22,7 +22,7 @@ class NotebookError:
 
     @classmethod
     def cell_error(cls, path, cell_idx, code, message):
-        """method for defining new errors which can be yield"""
+        """method for defining new errors which can be yielded"""
         return cls(
             path=path,
             line=cell_idx + 1,
