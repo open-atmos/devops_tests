@@ -1,6 +1,7 @@
 """utilities to ensure all TO-DO comments in the code are annotated
 with an id of an open GitHub issue"""
 
+import asyncio
 import os
 import re
 
@@ -32,20 +33,23 @@ def _git_tracked_file(request):
 
 @pytest.fixture(scope="session", name="gh_issues")
 def _gh_issues():
-    res = {}
-    repo = os.path.basename(Git(".").rev_parse("--show-toplevel"))
-    api = GhApi(owner="open-atmos", repo=repo)
-    pages = paged(
-        api.issues.list_for_repo,  # pylint: disable=no-member
-        owner="open-atmos",
-        repo=repo,
-        state="all",
-        per_page=100,
-    )
-    for page in pages:  # pylint: disable=not-an-iterable
-        for item in page.items:
-            res[item.number] = item.state
-    return res
+    async def fetch_issues():
+        res = {}
+        repo = os.path.basename(Git(".").rev_parse("--show-toplevel"))
+        api = GhApi(owner="open-atmos", repo=repo)
+        pages = paged(
+            api.issues.list_for_repo,  # pylint: disable=no-member
+            owner="open-atmos",
+            repo=repo,
+            state="all",
+            per_page=100,
+        )
+        async for page in pages:  # pylint: disable=not-an-iterable
+            for item in page.items:
+                res[item.number] = item.state
+        return res
+
+    return asyncio.run(fetch_issues())
 
 
 def test_todos_annotated(git_tracked_file, gh_issues):
