@@ -196,6 +196,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Attempt to fix notebooks missing header",
     )
     p.add_argument("--no-header-check", action="store_true")
+    p.add_argument("--no-badges-check", action="store_true")
     p.add_argument(
         "--no-git", action="store_true", help="Do not detect git repo root, use cwd()"
     )
@@ -250,7 +251,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         args,
         test_functions=[
             test_notebook_has_at_least_three_cells,
-            test_first_cell_badges,
+            test_first_cell_badges if not args.no_badges_check else None,
             test_second_cell_is_a_markdown_cell,
             test_colab_header if not args.no_header_check else None,
         ],
