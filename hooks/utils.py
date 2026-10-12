@@ -90,6 +90,8 @@ def open_and_test_notebooks(
             continue
 
         for test_func in test_functions:
+            if not test_func:
+                continue
             try:
                 for error in test_func(nb_path=notebook_path, nb=notebook):
                     all_errors.append(error)
