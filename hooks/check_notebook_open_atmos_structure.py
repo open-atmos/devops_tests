@@ -195,6 +195,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Attempt to fix notebooks missing header",
     )
+    p.add_argument("--no-header-check", action="store_true")
     p.add_argument(
         "--no-git", action="store_true", help="Do not detect git repo root, use cwd()"
     )
@@ -227,7 +228,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 prefer_git=prefer_git,
             )
 
-    def wrap_first_cell_badges(nb_path, nb):
+    def test_first_cell_badges(nb_path, nb):
         yield from test_first_cell_contains_three_badges(
             nb_path,
             nb,
@@ -236,7 +237,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             repo_root=repo_root,
         )
 
-    def wrap_colab_header(nb_path, nb):
+    def test_colab_header(nb_path, nb):
         yield from check_colab_header(
             nb_path,
             nb,
@@ -249,9 +250,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         args,
         test_functions=[
             test_notebook_has_at_least_three_cells,
-            wrap_first_cell_badges,
+            test_first_cell_badges,
             test_second_cell_is_a_markdown_cell,
-            wrap_colab_header,
+            test_colab_header if not args.no_header_check else None,
         ],
     )
 
