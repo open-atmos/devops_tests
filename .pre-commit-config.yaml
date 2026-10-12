@@ -13,25 +13,17 @@ repos:
       - id: end-of-file-fixer
       - id: debug-statements
 
-#  - repo: https://github.com/christopher-hacker/enforce-notebook-run-order
-#    rev: 2.1.1
-#    hooks:
-#      - id: enforce-notebook-run-order
+  - repo: https://github.com/christopher-hacker/enforce-notebook-run-order
+    rev: 2.1.1
+    hooks:
+      - id: enforce-notebook-run-order
+        exclude: tests/examples/bad.ipynb
 
   - repo: local
     hooks:
-      - id: check-notebooks
-        name: check notebooks
-        entry: check_notebooks
-        additional_dependencies:
-          - nbformat
-        language: python
-        types: [jupyter]
-        exclude: tests/examples/bad.ipynb
-
-      - id: check-badges
-        name: check badges
-        entry: check_badges
+      - id: check-notebook-open-atmos-structure
+        name: check notebook has open-atmos structure (i.e. check badges and colab header)
+        entry: check_notebook_open_atmos_structure
         additional_dependencies:
           - nbformat
           - pytest
@@ -41,18 +33,18 @@ repos:
         types: [jupyter]
         exclude: tests/examples/bad.ipynb
 
-      - id: notebooks-output
-        name: notebooks output
-        entry: notebooks_output
+      - id: check-notebook-output
+        name: check notebook output
+        entry: check_notebook_output
         additional_dependencies:
           - nbformat
         language: python
         types: [jupyter]
         exclude: tests/examples/bad.ipynb
 
-      - id: notebooks-using-jupyter-utils
-        name: notebooks using open-atmos-jupyter-utils
-        entry: notebooks_using_jupyter_utils
+      - id: check-notebooks-using-jupyter-utils
+        name: check notebooks using open-atmos-jupyter-utils
+        entry: check_notebook_using_jupyter_utils
         additional_dependencies:
           - nbformat
         language: python

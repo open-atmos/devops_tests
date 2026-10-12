@@ -4,13 +4,36 @@ Utils functions to reuse in different parts of the codebase
 
 import os
 import pathlib
-import argparse
+from pathlib import Path
+from dataclasses import dataclass
 from git import Git
 import nbformat
 
 
-class NotebookTestError(BaseException):
-    """Raised when a notebook validation test fails."""
+@dataclass
+class NotebookError:
+    """Custom error format for notebook checks."""
+
+    path: str
+    line: int
+    col: int
+    code: str
+    message: str
+
+    @classmethod
+    def cell_error(cls, path, cell_idx, code, message):
+        """method for defining new errors which can be yielded"""
+        return cls(
+            path=path,
+            line=cell_idx + 1,
+            col=1,
+            code=code,
+            message=message,
+        )
+
+    def format(self) -> str:
+        """format for error messages"""
+        return f"{self.path}:{self.line}:{self.col}: {self.code} {self.message}"
 
 
 def find_files(path_to_folder_from_project_root=".", file_extension=None):
@@ -41,20 +64,49 @@ def repo_path():
     return path
 
 
-def open_and_test_notebooks(argv, test_functions):
-    """Create argparser and run notebook tests"""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filenames", nargs="*", help="Filenames to check.")
-    args = parser.parse_args(argv)
+def open_and_test_notebooks(
+    args,
+    test_functions,
+):
+    """
+    Run notebook tests on a list of filenames using generator-based hooks.
+    """
+    all_errors = []
 
-    retval = 0
     for filename in args.filenames:
-        with open(filename, encoding="utf8") as notebook_file:
-            notebook = nbformat.read(notebook_file, nbformat.NO_CONVERT)
-            for func in test_functions:
-                try:
-                    func(notebook)
-                except NotebookTestError as e:
-                    print(f"{filename} : {e}")
-                    retval = 1
-    return retval
+        notebook_path = Path(filename)
+        try:
+            with notebook_path.open(encoding="utf8") as f:
+                notebook = nbformat.read(f, nbformat.NO_CONVERT)
+        except (OSError, nbformat.ValidationError) as exc:
+            all_errors.append(
+                NotebookError.cell_error(
+                    filename,
+                    0,
+                    code="NB000",
+                    message=f"Failed to read notebook: {exc}",
+                )
+            )
+            continue
+
+        for test_func in test_functions:
+            if not test_func:
+                continue
+            try:
+                for error in test_func(nb_path=notebook_path, nb=notebook):
+                    all_errors.append(error)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                all_errors.append(
+                    NotebookError.cell_error(
+                        filename,
+                        0,
+                        code="NBXXX",
+                        message=f"Exception in test {test_func.__name__}: "
+                        f"{type(exc).__name__}: {exc}",
+                    )
+                )
+
+    for error in all_errors:
+        print(error.format())
+
+    return 1 if all_errors else 0
