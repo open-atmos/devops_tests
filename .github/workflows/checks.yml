@@ -52,7 +52,7 @@ jobs:
       - run: pip install .
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pytest -vv -rP -We .
+        run: pytest -vv -rP -We . -k "not test_todos_annotated"
 
   check-todos:
     uses: AgnieszkaZaba/devops_tests/.github/workflows/check-todos.yml@todos
