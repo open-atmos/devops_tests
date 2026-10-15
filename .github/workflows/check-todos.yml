@@ -42,4 +42,4 @@ jobs:
           PYTHONPATH: ../devops_tests
         run: |
           python -m pytest -v \
-            ../devops_tests/path/to/test_todos_annotated.py
+            ../devops_tests/test_todos_annotated.py
