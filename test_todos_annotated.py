@@ -8,7 +8,6 @@ import re
 import pytest
 from binaryornot.check import is_binary
 from ghapi.all import GhApi, paged
-from git.cmd import Git
 
 from hooks.utils import find_files
 
@@ -35,11 +34,15 @@ def _git_tracked_file(request):
 def _gh_issues():
     async def fetch_issues():
         res = {}
-        repo = os.path.basename(Git(".").rev_parse("--show-toplevel"))
-        api = GhApi(owner="open-atmos", repo=repo)
+        owner, repo = os.environ["GITHUB_REPOSITORY"].split("/")
+        api = GhApi(
+            owner=owner,
+            repo=repo,
+            token=os.environ["GH_TOKEN"],
+        )
         pages = paged(
             api.issues.list_for_repo,  # pylint: disable=no-member
-            owner="open-atmos",
+            owner=owner,
             repo=repo,
             state="all",
             per_page=100,
