@@ -1,0 +1,45 @@
+name: Check TODO annotations
+
+on:
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
+
+jobs:
+  check-todos:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - name: Check out target repository
+        uses: actions/checkout@v4
+        with:
+          path: target
+
+      - name: Check out devops_tests
+        uses: actions/checkout@v4
+        with:
+          repository: AgnieszkaZaba/devops_tests
+          ref: todos
+          path: devops_tests
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install pytest binaryornot ghapi GitPython nbformat
+
+      - name: Run TODO checks
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PYTHONPATH: ../devops_tests
+        run: |
+          python -m pytest -v \
+            ../devops_tests/test_todos_annotated.py
